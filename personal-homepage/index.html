@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>个人主页</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      :root {
+        color-scheme: dark;
+        --bg: #0e1117;
+        --panel: #161b22;
+        --panel-soft: #1f2630;
+        --text: #eef2f8;
+        --muted: #9aa7b8;
+        --line: #303a48;
+        --accent: #58c7a4;
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        color: var(--text);
+        background: var(--bg);
+        font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+      }
+
+      .page {
+        width: min(1080px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 48px 0;
+      }
+
+      header {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 24px;
+        padding-bottom: 28px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .name {
+        margin: 0;
+        font-size: clamp(34px, 6vw, 64px);
+        line-height: 1;
+        letter-spacing: 0;
+      }
+
+      .tagline {
+        max-width: 360px;
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+        text-align: right;
+      }
+
+      .sections {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        margin-top: 34px;
+      }
+
+      section {
+        min-height: 280px;
+        padding: 24px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+      }
+
+      section:hover {
+        border-color: rgba(88, 199, 164, 0.7);
+        background: var(--panel-soft);
+      }
+
+      h2 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0 0 20px;
+        font-size: 22px;
+      }
+
+      h2::before {
+        content: "";
+        width: 9px;
+        height: 28px;
+        background: var(--accent);
+      }
+
+      .item {
+        padding: 16px 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .item:first-of-type {
+        border-top: 0;
+        padding-top: 0;
+      }
+
+      h3 {
+        margin: 0 0 8px;
+        font-size: 16px;
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      footer {
+        margin-top: 34px;
+        padding-top: 20px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      @media (max-width: 860px) {
+        header {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .tagline {
+          text-align: left;
+        }
+
+        .sections {
+          grid-template-columns: 1fr;
+        }
+
+        section {
+          min-height: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header>
+        <h1 class="name">你的名字</h1>
+        <p class="tagline">保持学习，持续构建，把想法变成可以运行的作品。</p>
+      </header>
+
+      <div class="sections">
+        <section>
+          <h2>教育经历</h2>
+          <div class="item">
+            <h3>某某大学 · 计算机科学与技术</h3>
+            <p>2022 - 2026，本科。主要学习 C 语言、数据结构、数据库、操作系统与 Web 开发。</p>
+          </div>
+          <div class="item">
+            <h3>核心课程</h3>
+            <p>C 语言程序设计、Java 程序设计、软件工程、计算机网络。</p>
+          </div>
+        </section>
+
+        <section>
+          <h2>项目经历</h2>
+          <div class="item">
+            <h3>C 语言做题系统</h3>
+            <p>基于 Vue 与 Spring Boot，实现题目展示、代码提交、编译运行和结果反馈。</p>
+          </div>
+          <div class="item">
+            <h3>个人主页</h3>
+            <p>使用 HTML 与 CSS 构建单页面展示，用于整理个人经历和联系方式。</p>
+          </div>
+        </section>
+
+        <section>
+          <h2>联系方式</h2>
+          <div class="item">
+            <h3>邮箱</h3>
+            <p><a href="mailto:yourname@example.com">yourname@example.com</a></p>
+          </div>
+          <div class="item">
+            <h3>GitHub</h3>
+            <p><a href="https://github.com/yourname">github.com/yourname</a></p>
+          </div>
+          <div class="item">
+            <h3>城市</h3>
+            <p>中国 · 城市占位</p>
+          </div>
+        </section>
+      </div>
+
+      <footer>© 2026 你的名字. All rights reserved.</footer>
+    </main>
+  </body>
+</html>
