@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>前端计算器</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        display: grid;
+        place-items: center;
+        color: #eef2f8;
+        background: #101418;
+        font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+      }
+
+      .calculator {
+        width: min(380px, calc(100vw - 32px));
+        padding: 22px;
+        border: 1px solid #2b3440;
+        background: #171d24;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      }
+
+      .title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 22px;
+      }
+
+      .badge {
+        color: #7dd3b0;
+        font-size: 13px;
+      }
+
+      .display {
+        min-height: 96px;
+        padding: 18px;
+        margin-bottom: 16px;
+        display: grid;
+        align-content: center;
+        justify-items: end;
+        gap: 8px;
+        border: 1px solid #2f3a47;
+        background: #0d1117;
+        overflow: hidden;
+      }
+
+      .expression {
+        width: 100%;
+        min-height: 22px;
+        color: #8d99a8;
+        font-size: 15px;
+        text-align: right;
+        word-break: break-all;
+      }
+
+      .value {
+        width: 100%;
+        font-size: 34px;
+        font-weight: 800;
+        text-align: right;
+        word-break: break-all;
+      }
+
+      .keys {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+
+      button {
+        height: 58px;
+        border: 0;
+        color: #eef2f8;
+        background: #222b36;
+        font-size: 18px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #2c3745;
+      }
+
+      button:active {
+        transform: translateY(1px);
+      }
+
+      .operator {
+        color: #7dd3b0;
+        background: #1d352f;
+      }
+
+      .danger {
+        color: #ffb4a8;
+        background: #3a2424;
+      }
+
+      .equal {
+        color: #07110d;
+        background: #7dd3b0;
+      }
+
+      .wide {
+        grid-column: span 2;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="calculator">
+      <div class="title">
+        <h1>计算器</h1>
+        <span class="badge">HTML · CSS · JS</span>
+      </div>
+
+      <section class="display" aria-live="polite">
+        <div class="expression" id="expression"></div>
+        <div class="value" id="value">0</div>
+      </section>
+
+      <section class="keys">
+        <button class="danger" data-action="clear">AC</button>
+        <button data-action="delete">DEL</button>
+        <button data-input="%">%</button>
+        <button class="operator" data-input="/">÷</button>
+
+        <button data-input="7">7</button>
+        <button data-input="8">8</button>
+        <button data-input="9">9</button>
+        <button class="operator" data-input="*">×</button>
+
+        <button data-input="4">4</button>
+        <button data-input="5">5</button>
+        <button data-input="6">6</button>
+        <button class="operator" data-input="-">−</button>
+
+        <button data-input="1">1</button>
+        <button data-input="2">2</button>
+        <button data-input="3">3</button>
+        <button class="operator" data-input="+">+</button>
+
+        <button class="wide" data-input="0">0</button>
+        <button data-input=".">.</button>
+        <button class="equal" data-action="calculate">=</button>
+      </section>
+    </main>
+
+    <script>
+      const expressionEl = document.querySelector("#expression");
+      const valueEl = document.querySelector("#value");
+      const keys = document.querySelector(".keys");
+
+      let expression = "";
+      let resultShown = false;
+      let hasError = false;
+
+      keys.addEventListener("click", (event) => {
+        const button = event.target.closest("button");
+        if (!button) return;
+
+        const input = button.dataset.input;
+        const action = button.dataset.action;
+
+        if (input) appendInput(input);
+        if (action === "clear") clearAll();
+        if (action === "delete") deleteLast();
+        if (action === "calculate") calculate();
+
+        render();
+      });
+
+      document.addEventListener("keydown", (event) => {
+        const allowed = "0123456789.+-*/%";
+        if (allowed.includes(event.key)) {
+          appendInput(event.key);
+        } else if (event.key === "Enter") {
+          calculate();
+        } else if (event.key === "Backspace") {
+          deleteLast();
+        } else if (event.key === "Escape") {
+          clearAll();
+        } else {
+          return;
+        }
+        render();
+      });
+
+      function appendInput(input) {
+        if (hasError) {
+          expression = "";
+          hasError = false;
+        }
+        if (resultShown && /[0-9.]/.test(input)) {
+          expression = "";
+        }
+        resultShown = false;
+
+        const last = expression.slice(-1);
+        const isOperator = /[+\-*/%]/.test(input);
+        if (isOperator && (!expression || /[+\-*/%]/.test(last))) {
+          expression = expression.slice(0, -1) + input;
+          return;
+        }
+        if (input === "." && currentNumber().includes(".")) {
+          return;
+        }
+        expression += input;
+      }
+
+      function clearAll() {
+        expression = "";
+        resultShown = false;
+        hasError = false;
+      }
+
+      function deleteLast() {
+        expression = expression.slice(0, -1);
+        resultShown = false;
+        hasError = false;
+      }
+
+      function calculate() {
+        if (!expression || /[+\-*/%.]$/.test(expression)) return;
+        try {
+          const value = Function(`"use strict"; return (${expression})`)();
+          if (!Number.isFinite(value)) {
+            throw new Error("Invalid result");
+          }
+          expression = trimNumber(value);
+          resultShown = true;
+        } catch (error) {
+          hasError = true;
+          resultShown = true;
+        }
+      }
+
+      function render() {
+        expressionEl.textContent = formatExpression(expression);
+        valueEl.textContent = hasError ? "错误" : expression ? formatExpression(expression) : "0";
+      }
+
+      function currentNumber() {
+        return expression.split(/[+\-*/%]/).pop();
+      }
+
+      function trimNumber(value) {
+        return Number.parseFloat(value.toFixed(10)).toString();
+      }
+
+      function formatExpression(value) {
+        return value.replaceAll("*", "×").replaceAll("/", "÷");
+      }
+    </script>
+  </body>
+</html>
